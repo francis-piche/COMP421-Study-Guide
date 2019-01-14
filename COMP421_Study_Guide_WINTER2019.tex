@@ -1,0 +1,118 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath,amsthm,amssymb,dsfont,polynom}
+\usepackage[pdftex]{graphicx}
+
+\graphicspath{{images/}}
+
+\usepackage{tikz}
+\usepackage{ dsfont}
+\usetikzlibrary{arrows}
+
+\usepackage[margin = 1.0in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\pagestyle{fancy}
+\lhead{Francis Pich\'e}
+
+\thispagestyle{empty}
+
+
+\newtheorem{problem}{Problem} 
+\theoremstyle{definition} 
+\newtheorem*{solution}{Solution}
+
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language= Python,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+
+\begin{document}
+\title{COMP 421 Study guide}
+\author{Francis Pich\'e}
+\date{\today}
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+\part{Preliminaries}
+\section{Disclaimer}
+These notes are curated from Joseph D'silva COMP421 lectures at McGill University. They are for study purposes only. They are not to be used for monetary gain.
+
+\part{Introduction to Databases}
+\section{Data Storage}
+In operating systems, file systems are used for persistent storage. This is insufficient because:
+\begin{itemize}
+	\item Only provides a basic API
+	\item Information may not be structured.
+	\item Only linear seek possible (slow)
+	\item May have data loss in case of power outages etc
+	\item Can't have concurrent access to files
+\end{itemize}
+
+\section{Entity-Relationship Model}
+
+\section{Relational Model and Data Definition Language}
+Entity Relationship Model is a language that describes the data determined through requirement analysis. This is very similar to UML, but is not the same. 
+\subsection{Requirement Analysis}
+When designing a database, we must first identify which data needs to be stored, and how it will be used. (Which operations need to be executed on the data).
+\\ \linebreak
+For example, if we were designing a database for Minerva at McGill, we would need to think about which entities are relevant to be stored. In OOP, these would be the classes. Things like the students, addresses, fees, courses etc are all relevant information. We would also need to think about the types of operations that must be possible by our database. Things like adding students, changing addresses, assessing fees etc.
+\\ \linebreak
+In an OOP setting, we would break down the problem by identifying classes and relationships between them. For example, we might have Student and Instructor classes, with a parent class Person, since the Student and Instructor share some attributes (name, age...). We also have relationships between classes such as a Student and Transcript. A Transcript does not exist unless assigned to a Student. We need ways to model all of these relationships in a database setting rather than an OOP setting.
+\\ \linebreak
+\subsection{ER}
+An \textit{entity} is a real world object which contains a set of attributes. A collection of instantiated entities would be an \textit{entity set}. An entity set must have a \textit{key}. This is an attribute that is underlined, and MUST be unique. There can be two attributes underlined, in which case both COMBINED must be unique. Individually they need not be unique. 
+\\ \linebreak
+ISA ("is a") hierarchy is similar to subclasses in OOP. This is represented as a triangle. The key is still in the parent entity set. 
+\\ \includegraphics{isa}\\
+There is a subtle point here in that unlike OOP, the attributes of the parent are not part of the child entity set (to avoid duplication, and keep things consistent).
+\\ \linebreak
+ If there are overlaps (a company can be both a partnership and Corporation), we must put a note explaining the situation. We assume that the parent is not covering all possible subtypes. (There may exist a company which is not a Sole, Partnership or Corporation).
+
+\subsection{Relationships}
+A relationship is an association among two or more entities. This can be one to one, many-to-one, many-to-many. A relationship set is a collection of similar relationships.
+\\ \linebreak
+There cannot be duplicate association instances. For example, if a Company donates 10\$ to a Party, (the association being the sponsorship), then there cannot be another 10\$ donation with the same Company and Party. The original must be updated.
+\\ \linebreak
+We can add arrows to constrain to a one-to-many or one-to-one. 
+\section{Relational Algebra}
+
+\part{SQL}
+\section{Simple Queries}
+\section{Advanced Queries}
+\section{Constraints}
+\section{Application Programming}
+
+\part{DB Internals}
+\section{Buffer Management}
+\section{Indexing}
+\section{Query Execution}
+\section{Query Optimization}
+\section{KV Stores}
+\section{Map Reduce}
+\section{Transactions}
+\section{Concurrency Control}
+\section{New Trendy Stuff}
+
+\end{document}
