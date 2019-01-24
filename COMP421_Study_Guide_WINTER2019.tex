@@ -70,8 +70,6 @@ In operating systems, file systems are used for persistent storage. This is insu
 	\item Can't have concurrent access to files
 \end{itemize}
 
-\section{Entity-Relationship Model}
-
 \section{Relational Model and Data Definition Language}
 Entity Relationship Model is a language that describes the data determined through requirement analysis. This is very similar to UML, but is not the same. 
 \subsection{Requirement Analysis}
@@ -95,10 +93,58 @@ A relationship is an association among two or more entities. This can be one to 
 \\ \linebreak
 There cannot be duplicate association instances. For example, if a Company donates 10\$ to a Party, (the association being the sponsorship), then there cannot be another 10\$ donation with the same Company and Party. The original must be updated.
 \\ \linebreak
-We can add arrows to constrain to a one-to-many or one-to-one. 
-\section{Relational Algebra}
+There are constraints as well.
+We can add an arrow, or two, to constrain to a one-to-many or one-to-one (respectively).  
+\\ \includegraphics{one-to-many}
+\\ \includegraphics{one-to-one}\\
+\textbf{Participation constraints} are when we must have at least one entity set is participating in the relationship.
+\\ \includegraphics{at-least-one}\\
+which is shown by a bold line. This can be combined with a key constraint to show a relationship in which exactly one entity set is related. 
+\\ \linebreak
+\textbf{Ternary relationships} are relationships involving 3 entity sets. Keep in mind that a ternary relationship database entries MUST include all 3 entities. If you have more than a ternary relationship (n-ary), it's probably an indication of bad design.
+\\ \linebreak
+\subsection{Weak Entities}
+\textbf{Weak Entities} are entities which do not have a natural attribute which can be used as a key, but there is another entity set with which we can identify the entities. For example, suppose we have Teams and Players. The teams have names, Players have names and shirt numbers. Here, the Team name may be unique for a league, but not overall, and a shirt number may be unique within a team, but not for the league. However, we can use the Team name as a primary key, with the Player shirt number as a partial key to identify a player. Note that this implies that a Player cannot exist without belonging to a Team.
+\\ \includegraphics{weak-entity}\\
+We often create artificial keys to keep track of information. For example student numbers. However, you should never use an artificial key as a partial key. If you're going to make one, make sure it's unique.
+\\ \linebreak
+We use weak entities when there is no global authority that allows creating unique identifiers.
+\\ \linebreak
+\subsection{Avoiding Redundancies}
+We should avoid redundancies by not storing the same information more than once. This is important since it may allow for data to become out of sync. 
+\\ \includegraphics{redundant}\\
+suppose someone changed the partyname but not the name of the associated party. The data would be inconsistent.
+\\ \linebreak
+
+\subsection{Entity Set or Attribute}
+When can an entity set simply be an attribute? If we only care about the key of an entity set, and we only have a one to many relationship, we can represent it instead as an attribute. The one-to-many is important since we can't have a list as an attribute value. For example, if we have Movies, with the attribute Category (rather that have a relationship between Movie and Category), we can't have a list of Categories if the Movie belongs to several Categories. This would require leaving it as a relationship rather than an attribute.
+\\ \linebreak
+
+\section{Relational Model}
+This is the most common model, and is closer to actual implementation. Used by iBM DB2, PostgreSQL, MySQL, SQLite etc.
+\\ \linebreak
+There are other types of models, which we will either ignore or look at later. 
+\\ \linebreak
+A relational database is nothing more than a set of relations. A relation consists of a schema and instance. A schema defines the name of a relation, its attributes, and the domain/type of each attribute. \texttt{Students(sid: int, name: string, login: string, faculty: string, major: string)} Ie: relation == table. Not to be confused with relationship in ER modeling (different things!). The instances are actual tuples (rows) in the table. 
+\\ \linebreak
+We cannot have identical instances (duplicate rows), at least one attribute value must be different. We also cannot assume anything about the order of the rows. The column order also doesn't matter. 
+\\ \linebreak
+\subsection{DDL and DML}
+DDL (data definition language) defines the schema of a database. (What the tables are called, their attributes) This only gives structure, no real data.
+\\ \linebreak
+DML (data manipulation language) manipulates the data. (deals with instances of the relations). For example, insert, update delete, query etc.
+\\ \linebreak
 
 \part{SQL}
+SQL is used as a standard to define DDL and DML. There are many dialects of it in varius DB's.
+\\ \linebreak
+SQL has data types.
+\begin{itemize}
+	\item CHAR (fixed length string)
+	\item VARCHAR (variable length string)
+	\item INT
+	\item SHORTINT
+\end{itemize}
 \section{Simple Queries}
 \section{Advanced Queries}
 \section{Constraints}
