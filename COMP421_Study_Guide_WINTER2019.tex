@@ -135,19 +135,120 @@ DDL (data definition language) defines the schema of a database. (What the table
 DML (data manipulation language) manipulates the data. (deals with instances of the relations). For example, insert, update delete, query etc.
 \\ \linebreak
 
+\section{Translating from ER to DDL}
+Entity sets are easy, just use the name of the entity set and its attributes.
+\texttt{EntitySetName(attr1: type,  attr2: type ... attrn: type)}
+\\ \linebreak
+\subsection{Relationships}
+What if there is a relationship? Well first translate the entity sets involved, then the relationship is a relation with the key of each entity set as it's key, and then it's attributes.
+\subsection{Key Constraints}
+\includegraphics{translate}\\
+What if there are key constraints?
+For a one to many relationship, we can make the primary key to be only the key of one entity set.
+\\ \includegraphics{key-constraint}\\
+So here, we cannot have one member belonging to multiple parties in both the ER and the DDL (since mname must be unique in a table, and the key constraint is in the diagram). \
+\\ \linebreak
+We can actually do better here. By moving the pname attribute up into the Members table as an attribute, we can reduce the total number of tables by 1. (Eliminating the need for the Membership table). However, this is only good if all members will have a party. If the new column we created in Members is sparse (a lot of NULL's) then its a big waste of space, in which case the 3 table approach is better.
+\\ \linebreak
+\subsection{Participation Constraints}
+Participation restraints are generally enforced by a NOT NULL on the foreign key. If we have a participation constraint on a key constraint, our 3 table solution from before no longer works. We now need to go with the 2 table solution since there is no way to enforce that the Members table has a corresponding entry in the Membership table (separate tables).
+\\ \linebreak
+If there is no key constraint along with the participation constraint (just the participation constraint on its own)\textbf{ THERE IS NO WAY TO ENFORCE IT.} It's an important note that \textbf{all} many-to-many relationships require 3 tables. And since participation constraints require 2 tables. So we must put a note to indicate that it should be a participation constraint.
+\\ \linebreak
+
+\subsection{Weak Entity Sets}
+Translating weak entity sets requires both the partial key of the weak entity set, and the key of the entity set on which the weak depends on. 
+
+\subsection{ISA Hierarchies}
+For ISA, we need to copy the key of the parent into all child tables, and then just the attributes of each child.
+\\ \linebreak
+There is another way which is to copy ALL parent attributes and then add the child-specific attributes. This might lead to duplication, but also make things easier on an application/efficiency level.
+\\ \linebreak
+A last alternative is to have only a table for the root (parent) entity set, with attributes for all the attributes contained in all the children, with NULL's if the entry does not have that datatype. This easy to store, but requires a lot of care in the application, since there is nothing stopping NULL values to be updated with real values, causing inconsistency with the model. 
+\\ \linebreak
+
 \part{SQL}
-SQL is used as a standard to define DDL and DML. There are many dialects of it in varius DB's.
+SQL is used as a standard to define DDL and DML. There are many dialects of it in various DB's.
 \\ \linebreak
 SQL has data types.
 \begin{itemize}
 	\item CHAR (fixed length string)
-	\item VARCHAR (variable length string)
+	\item VARCHAR (variable length string with upper limit)
 	\item INT
 	\item SHORTINT
+	\item FLOAT
+	\item DOUBLE PRECISION
+	\item DECIMAL (how many decimals are needed. )
+	\item DATE
+	\item TIME
 \end{itemize}
+
+\section{Creating a Table}
+Very similar to DDL, just:
+\begin{lstlisting}
+CREATE TABLE students
+	(sid INTEGER,
+	 name VARCHAR(30),
+	 login VARCHAR(30),
+	 faculty VARCHAR(30),
+	 major VARCHAR(30) DEFAULT 'undefined')
+\end{lstlisting}
+Note that the types are specified, it is case insensitive (but uppercase on commands is convention) and we can define default values.
 \section{Simple Queries}
+\subsection{Insert}
+\begin{lstlisting}
+INSERT INTO Students
+	VALUES (53666, 'Bartoli', 'bartoli@cs', 
+		    'Science', 'Software Engineering')
+\end{lstlisting}
+Note that the order of the values is the same as the order of our CREATE TABLE statement. If we want to insert only a subset of the values, we must specify which attributes are inserting. The rest will be NULL or default.
+\begin{lstlisting}
+
+INSERT INTO Students (sid, name, faculty)
+VALUES (53668, 'Chang', 'Eng')
+\end{lstlisting}
+
+\subsection{Delete}
+Similar syntax to Insert, but we need to specify a key on which to delete entries. 
+\\ \linebreak
+\begin{lstlisting}
+DELETE
+FROM Students
+WHERE name = 'Chang'
+\end{lstlisting}
+This will delete all entries with the name as Chang. Any attribute can be used, or even a combination of attributes. 
+
+\subsection{Update}
+\begin{lstlisting}
+UPDATE Students
+SET major = 'Software Engineering'
+WHERE sid = 53688
+\end{lstlisting}
+This will update the major of the entry with sid = 53688. We can update multiple columns at once as well the same way we inserted multiple values.
+
 \section{Advanced Queries}
+
 \section{Constraints}
+We can use NOT NULL when defining the table to ensure that an attribute is non-empty.
+\\ \linebreak
+\subsection{Primary Key Constraints}
+A set of fields is a \textbf{key candidate} if this set is unique in the table, and it is not true for any subset of the key set. Ie if there is a simpler unique key set, you must use it. If there are more than one elements in the set, then one is chosen to be a \textbf{primary key}.
+\\ \linebreak
+Often, this primary key is required to be NOT NULL. 
+\subsection{Foreign Key}
+A foreign key is a set of attributes from one relation that is used to refer to a tuple in another relation. 
+\\ \includegraphics{foreign-key} \\
+So here, sid refers to the students table, (foreign key) while the cid is the primary key of the Enrollment table. The foreign key must  be the primary key of the other table. However, if we delete a record from the student table, we must first delete all dependent records in the Enrollment table.
+\begin{lstlisting}
+CREATE TABLE Enrolled
+(
+	sid CHAR(9),
+	cid VARCHAR(20),
+	grade CHAR(2),
+	PRIMARY KEY (sid, cid),
+	FOREIGN KEY (sid) REFERENCES Students
+)
+\end{lstlisting}
 \section{Application Programming}
 
 \part{DB Internals}
